@@ -1,0 +1,4 @@
+com\boc\beers\JsonTransformer.class
+com\boc\beers\Beer.class
+com\boc\beers\BeerDao.class
+com\boc\beers\Application.class
