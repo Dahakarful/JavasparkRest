@@ -10,20 +10,24 @@ import static spark.Spark.*;
 public class Application {
 
     private static DB mongo() throws Exception{
-        String host = "127.0.0.1";
+        String host = System.getenv("MONGODB_ADDON_HOST");
         if(host == null){
             MongoClient mongoClient = new MongoClient("localhost");
             return mongoClient.getDB("todoapp");
         }
         int port = 27017;
-        String dbname = "test";
+        String dbname = System.getenv("MONGODB_ADDON_DB");
         String username = System.getenv("MONGODB_DB_USERNAME");
         String password = System.getenv("MONGODB_DB_PASSWORD");
         MongoClientOptions mongoClientOptions = MongoClientOptions.builder().build();
         MongoClient mongoClient = new MongoClient(new ServerAddress(host, port), mongoClientOptions);
         mongoClient.setWriteConcern(WriteConcern.SAFE);
         DB db = mongoClient.getDB(dbname);
-        return db;
+        if(db.authenticate(username, password.toCharArray())){
+            return db;
+        }else{
+            throw new RuntimeException("Not able to authenticate with MongoDB");
+        }
     }
 
     public static void main(String args[]) throws Exception {
